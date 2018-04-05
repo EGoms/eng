@@ -18,7 +18,7 @@ public class Weights {
 	public void addToEvalStrategy(String examOrAssignement, Double weight){
 		if(evalStrategy == null)
 			evalStrategy = new HashMap<String, Double>();
-			evalStrategy.put(examOrAssignement, weight);
+			evalStrategy.put(examOrAssignement.toUpperCase(), weight);
 	}
 
 	public void initializeIterator(){
@@ -38,7 +38,7 @@ public class Weights {
 	}
 
 	public Double getValueWithKey(String key){
-		return evalStrategy.get(key);
+		return evalStrategy.get(key.toUpperCase());
 	}
 	
 	public void next(){

@@ -67,7 +67,7 @@ public class OfferingFactory {
 				int numberOfEvaluationWeights = Integer.parseInt(line.split("\t")[2]);
 //				Read all the evaluation strategies that are available for a particular evaluation type and
 				for(int j=0; j<numberOfEvaluationWeights;j++){
-					line = br.readLine();
+					line = br.readLine().toUpperCase();
 					weights.addToEvalStrategy(line.split("\t")[0], Double.parseDouble(line.split("\t")[1]));
 				}
 //				add them to the course

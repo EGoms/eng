@@ -1,10 +1,12 @@
 package authenticatedUsers;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import authenticationServer.AuthenticationToken;
 import customDatatypes.EvaluationTypes;
+import customDatatypes.Marks;
 import customDatatypes.NotificationTypes;
 import offerings.ICourseOffering;
 import registrar.ModelRegister;
@@ -102,6 +104,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 			}
 		}
 		//reader.close();
+		//System.out.println(target.getCoursesEnrolled());
 	}
 	
 	public void selectNotification() {
@@ -150,13 +153,28 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 	/**
 	 * prints the final grade for every course the student is enrolled in
 	 * can't verify this works until marks are added to course
+	 * currently works when the student has marks for every assignment, change to maybe just print the current marks they have
 	 */
 	public void printRecord() {
 		StudentModel target = verifyStudent(this.authenticationToken);
-		
-		for (ICourseOffering course : target.getCoursesEnrolled()) {
-			System.out.println(target.getPerCourseMarks());
+		System.out.println(target.getCoursesEnrolled());
+		for (ICourseOffering icourse : target.getCoursesEnrolled()) {
+			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(icourse))
+				System.out.println("No marks for this student");
+			else {
+				Marks marks = target.getPerCourseMarks().get(icourse);
+				System.out.println("Grades for " + target.getName() + " " + target.getSurname() + " in " + icourse.getCourseName());
+				marks.initializeIterator();
+				while (marks.hasNext()) {
+					Entry<String, Double> current = marks.getNextEntry();
+					System.out.println(current.getKey()+ " " + current.getValue());
+				}
+			}
 		}
+//		for (ICourseOffering course : target.getCoursesEnrolled()) {
+//			if (target.getPerCourseMarks().containsKey(course))
+//				course.calculateFinalGrade(target.getID());
+//		}
 		
 	}
 	private StudentModel verifyStudent(AuthenticationToken token) {

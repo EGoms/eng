@@ -78,29 +78,43 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		
 		getMark(realStudent, realCourse, reader);
 		
-		Marks x = realStudent.getPerCourseMarks().get(realCourse);
-		x.initializeIterator();
-		while (x.hasNext()) {
-			Entry<String, Double> thing = x.getNextEntry();
-			System.out.println(thing);
-		}
+		//print out the marks to check
+//		Marks x = realStudent.getPerCourseMarks().get(realCourse);
+//		x.initializeIterator();
+//		while (x.hasNext()) {
+//			Entry<String, Double> current = x.getNextEntry();
+//			System.out.println(current.getKey() + " " + current.getValue());
+//		}
+		
+		
+		System.out.println("Would you like to enter grades for another student? (y/n): ");
+		line = reader.next().toUpperCase();
+		if (line.equals("Y"))
+			addMark();
 			
 	}
 	private void getMark(StudentModel student, CourseOffering course, Scanner reader) {
 		Map<ICourseOffering, Marks> grades;
 		Marks mark = new Marks();
-		if (student.getPerCourseMarks() == null || !student.getPerCourseMarks().containsKey(course)) {
+		if (student.getPerCourseMarks() == null) {
 			System.out.println("Type of assessment: \n");
-			String line = reader.next();
+			String line = reader.next().toUpperCase();
+			System.out.println("Mark: \n");
+			Double grade = reader.nextDouble();
+			grades = new HashMap<ICourseOffering, Marks>();
+			student.setPerCourseMarks(grades);
+			grades.put(course, mark);
+			student.getPerCourseMarks().get(course).addToEvalStrategy(line, grade);
+		} else if (!student.getPerCourseMarks().containsKey(course)) {	
+			System.out.println("Type of assessment: \n");
+			String line = reader.next().toUpperCase();
 			System.out.println("Mark: \n");
 			Double grade = reader.nextDouble();
 			mark.addToEvalStrategy(line, grade);
-			grades = new HashMap<ICourseOffering, Marks>();
-			grades.put(course, mark);
-			student.setPerCourseMarks(grades);
+			student.getPerCourseMarks().put(course, mark);
 		} else {
 			System.out.println("Type of assessment: \n");
-			String line = reader.next();
+			String line = reader.next().toUpperCase();
 			System.out.println("Mark: \n");
 			Double grade = reader.nextDouble();
 			//mark.addToEvalStrategy(line, grade);

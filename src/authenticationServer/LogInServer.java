@@ -70,9 +70,9 @@ public class LogInServer {
 	 * @param id
 	 * @return true if id is in the map, false if not
 	 */
-	private boolean verify(String id) {
+	private boolean verify(String id, String pw) {
 		if (logInInfo.containsKey(id)) {
-			if (!register.containsKey(id)) {
+			if (!register.containsKey(id) && logInInfo.get(id).equals(pw)) {
 				return true;
 			}
 		}
@@ -85,9 +85,9 @@ public class LogInServer {
 	 * @param id
 	 * @return authenticationToken set with the user id and type
 	 */
-	public AuthenticationToken login(String id) {
+	public AuthenticationToken login(String id, String pw) {
 		LoggedInUserFactory fact = new LoggedInUserFactory();
-		if (!verify(id)) {
+		if (!verify(id, pw)) {
 			if (register.containsKey(id)) {
 				return register.get(id).getAuthenticationToken();
 			}
@@ -127,7 +127,7 @@ public class LogInServer {
 		System.out.print("Enter password: ");
 		String pw = reader.next();
 		
-		if (!verify(id)) {
+		if (!verify(id, pw)) {
 			if (register.containsKey(id))
 				return (LoggedInAdmin) register.get(id);
 			else {
@@ -157,7 +157,7 @@ public class LogInServer {
 		System.out.print("Enter password: ");
 		String pw = reader.next();
 		
-		if (!verify(id)) {
+		if (!verify(id, pw)) {
 			if (register.containsKey(id)) {
 				System.out.println("User already logged in");
 				return;

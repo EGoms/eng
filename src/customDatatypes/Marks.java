@@ -19,7 +19,7 @@ public class Marks {
 	public void addToEvalStrategy(String examOrAssignement, Double mark){
 		if(evalStrategy == null)
 			evalStrategy = new HashMap<String, Double>();
-			evalStrategy.put(examOrAssignement, mark);
+			evalStrategy.put(examOrAssignement.toUpperCase(), mark);
 	}
 
 	public void initializeIterator(){
@@ -39,7 +39,7 @@ public class Marks {
 	}
 	
 	public Double getValueWithKey(String key){
-		return evalStrategy.get(key);
+		return evalStrategy.get(key.toUpperCase());
 	}
 	
 	public void next(){

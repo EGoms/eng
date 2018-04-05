@@ -88,6 +88,9 @@ public class TestStudentModelFactory_1 {
 		//	studentOp.enroll(stud);
 		//}
 		
+		for (LoggedInStudent stud : students)
+			stud.printRecord();
+		
 		//for all students in logged in users call enroll
 //		for (LoggedInAuthenticatedUser student : loggedIn) {
 //			if (student.getAuthenticationToken().getUserType().equals("Student")) {
