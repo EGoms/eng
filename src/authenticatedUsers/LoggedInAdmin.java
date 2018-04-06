@@ -111,7 +111,16 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 	 * @throws IOException
 	 */
 	public void restart() throws IOException {
-		
+		OfferingFactory fact = new OfferingFactory();
+		File dir = new File("./");
+		for (File file : dir.listFiles()) {
+			if (file.isFile() && (file.getName().contains("class_"))) {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				CourseOffering course = fact.createCourseOffering(reader);
+				reader.close();
+			}
+		}
+				
 	}
 	/**
 	 * this saves each course in the system to a separate file containing all the information that was read in plus students
@@ -124,7 +133,7 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 		for (CourseOffering x : ModelRegister.getInstance().getAllCourses()) {
 			try (BufferedWriter writer = new BufferedWriter(new FileWriter("class_" +i+".txt"))) {
 				i++;
-				String toWrite = x.getCourseName() + "\t" + x.getCourseID() + " " + x.getSemester() + "\n";
+				String toWrite = x.getCourseName() + "\t" + x.getCourseID() + "\t" + x.getSemester() + "\n";
 				writer.write(toWrite);
 				int instructors = x.getInstructor().size();
 				toWrite = "TUTOR" + "\t" + "LIST" + "\t" + instructors +"\n";
@@ -173,10 +182,11 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 						writer.write(str);
 					}
 					
-					for (StudentModel z : x.getStudentsEnrolled()) {
-						toWrite = z.getName() + "\t" + z.getSurname() + "\t" + z.getID() + "\n";
-						writer.write(toWrite);
-					}
+					
+				}
+				for (StudentModel z : x.getStudentsEnrolled()) {
+					toWrite = z.getName() + "\t" + z.getSurname() + "\t" + z.getID() + "\n";
+					writer.write(toWrite);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

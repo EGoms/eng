@@ -71,11 +71,12 @@ public class TestStudentModelFactory_1 {
 		LoggedInStudentOperation studentOp = new LoggedInStudentOperation();
 		LoggedInInstructorOperation instructorOp = new LoggedInInstructorOperation();
 		
-		admin.start();
+		//admin.start();
+		admin.restart();
 		
 		server.login();
 		LoggedInAdmin ad = (LoggedInAdmin) server.getLoggedInUser("0000");
-		//ad.stop();
+		ad.stop();
 		List<LoggedInAuthenticatedUser> loggedIn = server.getLoggedInUsers();
 		List<LoggedInStudent> students = server.getLoggedInStudents();
 		List<LoggedInInstructor> instructors = server.getLoggedInInstructors();
