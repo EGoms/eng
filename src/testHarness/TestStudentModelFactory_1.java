@@ -89,7 +89,7 @@ public class TestStudentModelFactory_1 {
 			stud.selectNotification();
 		}
 		for (LoggedInInstructor inst : instructors)
-			inst.addMark();
+			inst.printRecord();
 		//for (LoggedInStudent stud : students) {
 		//	studentOp.enroll(stud);
 		//}
