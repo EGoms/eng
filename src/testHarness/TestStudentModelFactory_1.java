@@ -84,6 +84,7 @@ public class TestStudentModelFactory_1 {
 		
 		for (LoggedInStudent stud : students) { //this one the method is called from the loggedInStudent class
 			stud.enroll();
+			stud.selectNotification();
 		}
 		for (LoggedInInstructor inst : instructors)
 			inst.addMark();

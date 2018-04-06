@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import authenticationServer.AuthenticationToken;
+import authenticationServer.LogInServer;
 import customDatatypes.Marks;
 import customDatatypes.Weights;
 import offerings.CourseOffering;
@@ -79,11 +80,12 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		line = reader.next();
 		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
+		
 		getMark(realStudent, realCourse, reader);
 		
 
 		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
-
+		System.out.println("You have 1 new " + realStudent.getNotificationType() + " notification");
 		line = reader.next().toUpperCase();
 		if (line.equals("Y"))
 			addMark();
