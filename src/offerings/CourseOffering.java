@@ -96,9 +96,9 @@ public class CourseOffering implements ICourseOffering{
 			weights.initializeIterator();
 			while(weights.hasNext()){
 				weights.next();
-				finalGrade += weights.getCurrentValue() * marks.getValueWithKey(weights.getCurrentKey());
+				finalGrade += weights.getCurrentValue() * marks.getValueWithKey(weights.getCurrentKey().toUpperCase());
 			}
-			//System.out.println(finalGrade);
+			System.out.println(finalGrade/100);
 		}
 	}
 
@@ -116,9 +116,9 @@ public class CourseOffering implements ICourseOffering{
 		weights.initializeIterator();
 		while(weights.hasNext()){
 			weights.next();
-			finalGrade += weights.getCurrentValue() * marks.getValueWithKey(weights.getCurrentKey());
+			finalGrade += weights.getCurrentValue() * marks.getValueWithKey(weights.getCurrentKey().toUpperCase());
 		}
-		//System.out.println(finalGrade);
+		System.out.println(finalGrade/100);
 	}
 	
 }

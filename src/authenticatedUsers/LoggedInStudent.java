@@ -1,10 +1,12 @@
 package authenticatedUsers;
 
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import authenticationServer.AuthenticationToken;
 import customDatatypes.EvaluationTypes;
+import customDatatypes.Marks;
 import customDatatypes.NotificationTypes;
 import offerings.ICourseOffering;
 import registrar.ModelRegister;
@@ -101,7 +103,6 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 				icourse.getStudentsEnrolled().add(target);		//add the student to the course's student
 			}
 		}
-		//reader.close();
 	}
 	
 	public void selectNotification() {
@@ -129,8 +130,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 			}
 		
 		target.setNotificationType(type); //set the notification type for the student
-		System.out.println(target.getNotificationType());
-		//reader.close();
+		System.out.println("Your notification type is: " + target.getNotificationType());
 	}
 	/**
 	 * this method changes the notification type for the student to the parameter
@@ -155,13 +155,24 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 		StudentModel target = verifyStudent(this.authenticationToken);
 		
 		for (ICourseOffering course : target.getCoursesEnrolled()) {
-			System.out.println(target.getPerCourseMarks());
+			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(course)) {
+				System.out.println("No marks for the student");
+			} else {
+				System.out.println("Grades for " + target.getName()+ " "+target.getSurname() + " in " + course.getCourseName());
+				Marks marks = target.getPerCourseMarks().get(course);
+				marks.initializeIterator();
+				while (marks.hasNext()) {
+					Entry<String, Double> current = marks.getNextEntry();
+					System.out.println(current.getKey() + " " + current.getValue());
+				}
+			}
 		}
 		
 	}
+	
 	private StudentModel verifyStudent(AuthenticationToken token) {
 		StudentModel student = null;
-		if (token.getUserType().equals("Student")) {
+		if (token.getUserType().equalsIgnoreCase("Student")) {
 			student = ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated(token.getTokenID()) ? (StudentModel) ModelRegister.getInstance().getRegisteredUser(token.getTokenID()) : null;
 		}
 		return student;

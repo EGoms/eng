@@ -39,6 +39,7 @@ public class LogInServer {
 	private LogInServer() {
 		//TODO: Parse a file and save passwords/username in a structure for look up when logging in
 		logInInfo = new HashMap<String, String>();
+		logInInfo.put("0000", "pass");
 		register = new HashMap<String, LoggedInAuthenticatedUser>();
 		BufferedReader in;
 		String line;
@@ -46,8 +47,8 @@ public class LogInServer {
 			in = new BufferedReader(new FileReader(new File("file.txt")));
 			while ((line = in.readLine()) != null) {
 				String id = line.split("\t")[0];
-				String type = line.split("\t")[1];
-				logInInfo.put(id, type);
+				String pw = line.split("\t")[1];
+				logInInfo.put(id, pw);
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage() + " exception thrown at LogInServer");
@@ -70,9 +71,9 @@ public class LogInServer {
 	 * @param id
 	 * @return true if id is in the map, false if not
 	 */
-	private boolean verify(String id) {
+	private boolean verify(String id, String pw) {
 		if (logInInfo.containsKey(id)) {
-			if (!register.containsKey(id)) {
+			if (!register.containsKey(id) && logInInfo.get(id).equals(pw)) {
 				return true;
 			}
 		}
@@ -85,9 +86,9 @@ public class LogInServer {
 	 * @param id
 	 * @return authenticationToken set with the user id and type
 	 */
-	public AuthenticationToken login(String id) {
+	public AuthenticationToken login(String id, String pw) {
 		LoggedInUserFactory fact = new LoggedInUserFactory();
-		if (!verify(id)) {
+		if (!verify(id, pw)) {
 			if (register.containsKey(id)) {
 				return register.get(id).getAuthenticationToken();
 			}
@@ -127,7 +128,7 @@ public class LogInServer {
 		System.out.print("Enter password: ");
 		String pw = reader.next();
 		
-		if (!verify(id)) {
+		if (!verify(id, pw)) {
 			if (register.containsKey(id))
 				return (LoggedInAdmin) register.get(id);
 			else {
@@ -157,7 +158,7 @@ public class LogInServer {
 		System.out.print("Enter password: ");
 		String pw = reader.next();
 		
-		if (!verify(id)) {
+		if (!verify(id, pw)) {
 			if (register.containsKey(id)) {
 				System.out.println("User already logged in");
 				return;

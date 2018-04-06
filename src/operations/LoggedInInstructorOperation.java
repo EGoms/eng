@@ -1,5 +1,6 @@
 package operations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Scanner;
 import authenticatedUsers.LoggedInAuthenticatedUser;
 import authenticatedUsers.LoggedInStudent;
 import customDatatypes.Marks;
+import customDatatypes.Weights;
 import offerings.CourseOffering;
 import offerings.ICourseOffering;
 import registrar.ModelRegister;
@@ -18,11 +20,10 @@ import systemUsers.StudentModel;
 
 public class LoggedInInstructorOperation implements ILoggedInInstructorOperation {
 
-	@Override
 	public void addMark(LoggedInAuthenticatedUser user) {
 		InstructorModel teacher = verifyInstructor(user);
 		Scanner reader = new Scanner(System.in);
-		Map<ICourseOffering, Marks> grades;
+	
 		for (ICourseOffering course : teacher.getIsTutorOf())
 			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
 		System.out.println("Enter class ID: ");
@@ -37,74 +38,94 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 		line = reader.next();
 		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
-		System.out.println("Type of assessment: \n");
-		line = reader.next();
-		System.out.println("Mark: \n");
-		Double mark = reader.nextDouble();
-		Marks grade = new Marks();
-		grade.addToEvalStrategy(line, mark);
-		//add more marks if there are more to add?
-		//then put course, marks in students set per course marks?
+		getMark(realStudent, realCourse, reader);
 		
-		if (realStudent.getPerCourseMarks() == null) {
-			//System.out.println("problem");
-			grades = new HashMap<ICourseOffering, Marks>();
-			grades.put(realCourse, grade);
-			realStudent.setPerCourseMarks(grades);
-		}
-		System.out.println(realStudent.getPerCourseMarks());
+//		Marks x = realStudent.getPerCourseMarks().get(realCourse);
+//		x.initializeIterator();
+//		while (x.hasNext()) {
+//			Entry<String, Double> thing = x.getNextEntry();
+//			System.out.println(thing);
+//		}
+		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
+		line = reader.next().toUpperCase();
+		if (line.equals("Y"))
+			addMark(user);
+			
 	}
-	public void addMark(LoggedInAuthenticatedUser user, LoggedInAuthenticatedUser user1) {
-		InstructorModel teacher = verifyInstructor(user);
-		StudentModel student = verifyStudent(user1);
-		Scanner reader = new Scanner(System.in);
+	private void getMark(StudentModel student, CourseOffering course, Scanner reader) {
 		Map<ICourseOffering, Marks> grades;
-		List<ICourseOffering> courses = teacher.getIsTutorOf();
-		if (courses == null) {
-			System.out.println("Not teaching any courses");
+		Marks mark = new Marks();
+		if (student.getPerCourseMarks() == null) {
+			System.out.println("Type of assessment: \n");
+			String line = reader.next().toUpperCase();
+			System.out.println("Mark: \n");
+			Double grade = reader.nextDouble();
+			mark.addToEvalStrategy(line, grade);
+			grades = new HashMap<ICourseOffering, Marks>();
+			student.setPerCourseMarks(grades);
+			student.getPerCourseMarks().put(course, mark);
+		} else if (!student.getPerCourseMarks().containsKey(course)) {
+			System.out.println("Type of assessment: \n");
+			String line = reader.next().toUpperCase();
+			System.out.println("Mark: \n");
+			Double grade = reader.nextDouble();
+			mark.addToEvalStrategy(line, grade);
+			student.getPerCourseMarks().put(course, mark);
+		} else {
+			System.out.println("Type of assessment: \n");
+			String line = reader.next().toUpperCase();
+			System.out.println("Mark: \n");
+			Double grade = reader.nextDouble();
+			//mark.addToEvalStrategy(line, grade);
+			student.getPerCourseMarks().get(course).addToEvalStrategy(line, grade);
+		}
+		System.out.println("Would you like to enter another grade? (y/n)");
+		String line = reader.next().toUpperCase();
+		if (line.equals("Y"))
+			getMark(student, course, reader);
+		else
 			return;
-		}
-		for (ICourseOffering course : courses) { //for the courses the teacher is a tutor of
-			if (course.getStudentsEnrolled().contains(student)) { //if the student is enrolled then
-				
-				if (student.getPerCourseMarks() == null) {
-					grades = new HashMap<ICourseOffering, Marks>();
-					grades.put(course, null);
-					student.setPerCourseMarks(grades);
-				}
-				
-				//student.getPerCourseMarks().put(course, null);
-				System.out.println("Type of assessment: \n");
-				String line = reader.next();
-				System.out.println("Mark: \n");;
-				Double mark = reader.nextDouble();
-				
-				if (student.getPerCourseMarks().containsKey(course));
-					Marks forCourse = student.getPerCourseMarks().get(course);
-					if (forCourse != null) {
-						forCourse.initializeIterator();
-						while (forCourse.hasNext()) {
-							if (forCourse.getCurrentKey().equals(line))
-								System.out.println("Mark already present");
-							else {
-								forCourse.addToEvalStrategy(line, mark);
-							}
-						}
-					} else {
-						student.getPerCourseMarks().get(course).addToEvalStrategy(line, mark);
-					}
-				 
-				//then otherwise the course isn't in so add the course too?
-				//add to student percourse marks at the course a <String, Double> if string not already in
-			}
-		}
-		
 	}
 
-	@Override
 	public void modifyMark(LoggedInAuthenticatedUser user) {
-		//query a student in a class and a specific mark entry and edit it
+		InstructorModel teacher = verifyInstructor(user);
+		Scanner reader = new Scanner(System.in);
+	
+		//select a course
+		for (ICourseOffering course : teacher.getIsTutorOf())
+			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
+		System.out.println("Enter class ID: ");
+		String line = reader.next().toUpperCase();
+		CourseOffering realCourse = ModelRegister.getInstance().getRegisteredCourse(line);
 		
+		//select a student
+		for (StudentModel student : realCourse.getStudentsEnrolled()) 
+			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
+		System.out.println("Enter Student ID: ");
+		line = reader.next();
+		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		
+		//Weights = the eval strats (assign, etc) for the course for the specific student?
+		//present the possibilities for the specified evaluation strategy and have user enter one to change
+		//also adds the mark if its not there
+		List<String> possibilities = new ArrayList<String>();
+		Weights stuff = realCourse.getEvaluationStrategies().get(realStudent.getEvaluationEntities().get(realCourse));
+		stuff.initializeIterator();
+		while (stuff.hasNext()) {
+			Entry<String, Double> current = stuff.getNextEntry();
+			possibilities.add(current.getKey());
+			System.out.println(current.getKey());
+		}
+		
+		System.out.println("Pick one of the above");
+		line = reader.next().toUpperCase();
+		System.out.println("Enter new grade: ");
+		double grade = reader.nextDouble();
+		for (String s : possibilities) {
+			if (line.equalsIgnoreCase(s))
+				realStudent.getPerCourseMarks().get(realCourse).addToEvalStrategy(line, grade);
+		}
+		//realStudent.getPerCourseMarks().get(realCourse).addToEvalStrategy(line, grade);
 	}
 
 	@Override
