@@ -18,7 +18,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 	private String surname;
 	private String ID;
 	private AuthenticationToken authenticationToken;
-	private String type;
+	private String type = "Student";
 	
 	public String getName() {
 		return name;
@@ -56,7 +56,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 	 * added so we can store the type
 	 */
 	public String getType() {
-		return this.type = "Student";
+		return this.type;
 	}
 	
 	/**
@@ -168,11 +168,6 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 				}
 			}
 		}
-//		for (ICourseOffering course : target.getCoursesEnrolled()) {
-//			if (target.getPerCourseMarks().containsKey(course))
-//				course.calculateFinalGrade(target.getID());
-//		}
-		
 	}
 	
 	private StudentModel verifyStudent(AuthenticationToken token) {

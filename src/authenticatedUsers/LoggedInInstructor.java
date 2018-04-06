@@ -23,7 +23,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 	private String surname;
 	private String ID;
 	private AuthenticationToken authenticationToken;
-	private String type;
+	private String type = "Instructor";
 	
 	public String getName() {
 		return name;
@@ -59,7 +59,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 
 	@Override
 	public String getType() {
-		return this.type = "Instructor";
+		return this.type;
 	}
 	
 	public void addMark() {
@@ -67,27 +67,27 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		Scanner reader = new Scanner(System.in);
 		System.out.println(teacher.getName() + " " + teacher.getSurname());
 	
-		for (ICourseOffering course : teacher.getIsTutorOf())
-			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
-		CourseOffering realCourse = ModelRegister.getInstance().getRegisteredCourse(line);
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 		
-		for (StudentModel student : realCourse.getStudentsEnrolled()) 
+		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		
 		System.out.println("Enter Student ID: ");
 		line = reader.next();
-		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
 		
-		getMark(realStudent, realCourse, reader);
+		getMark(student, course, reader);
 		
 
 		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
-		System.out.println("You have 1 new " + realStudent.getNotificationType() + " notification");
+		System.out.println("You have 1 new " + student.getNotificationType() + " notification");
 		line = reader.next().toUpperCase();
-		if (line.equals("Y"))
+		if (line.equalsIgnoreCase("Y"))
 			addMark();
 			
 	}
@@ -142,7 +142,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		
 		System.out.println("Would you like to enter another grade? (y/n)");
 		String line = reader.next().toUpperCase();
-		if (line.equals("Y"))
+		if (line.equalsIgnoreCase("Y"))
 			getMark(student, course, reader);
 		else
 			return;
@@ -153,25 +153,25 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		Scanner reader = new Scanner(System.in);
 	
 		//select a course
-		for (ICourseOffering course : teacher.getIsTutorOf())
-			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
-		CourseOffering realCourse = ModelRegister.getInstance().getRegisteredCourse(line);
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 		
 		//select a student
-		for (StudentModel student : realCourse.getStudentsEnrolled()) 
+		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		System.out.println("Enter Student ID: ");
 		line = reader.next();
-		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
-		helper(realCourse, realStudent, reader);
+		helper(course, student, reader);
 	}
 	
-	private void helper(CourseOffering realCourse, StudentModel realStudent, Scanner reader) {
+	private void helper(CourseOffering course, StudentModel student, Scanner reader) {
 		List<String> possibilities = new ArrayList<String>();
-		Weights stuff = realCourse.getEvaluationStrategies().get(realStudent.getEvaluationEntities().get(realCourse));
+		Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
 		stuff.initializeIterator();
 		while (stuff.hasNext()) {
 			Entry<String, Double> current = stuff.getNextEntry();
@@ -185,32 +185,32 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		double grade = reader.nextDouble();
 		for (String s : possibilities) {
 			if (line.equalsIgnoreCase(s))
-				realStudent.getPerCourseMarks().get(realCourse).addToEvalStrategy(line, grade);
+				student.getPerCourseMarks().get(student).addToEvalStrategy(line, grade);
 		}
 	}
 	public void calcGrade() {
 		InstructorModel teacher = verifyInstructor(this.authenticationToken);
 		Scanner reader = new Scanner(System.in);
 		//select a course
-		for (ICourseOffering course : teacher.getIsTutorOf())
-			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
-		CourseOffering realCourse = ModelRegister.getInstance().getRegisteredCourse(line);
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 				
 		//select a student
-		for (StudentModel student : realCourse.getStudentsEnrolled()) 
+		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		System.out.println("Enter Student ID: ");
 		line = reader.next();
 		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
-		realCourse.calculateFinalGrade(realStudent.getID());
+		course.calculateFinalGrade(realStudent.getID());
 	}
 	
 	private InstructorModel verifyInstructor(AuthenticationToken token) {
 		InstructorModel teacher = null;
-		if (token.getUserType().equals("Instructor")) {
+		if (token.getUserType().equalsIgnoreCase("Instructor")) {
 			teacher = (ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated(token.getTokenID()) ? (InstructorModel) ModelRegister.getInstance().getRegisteredUser(token.getTokenID()) : null);
 		}
 		return teacher;
