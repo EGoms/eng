@@ -75,12 +75,12 @@ public class OfferingFactory {
 			}
 			
 			//create an admin, uses a different method because file might not contain a line for admin, so we use defaults
-			AdminModelFactory fac = new AdminModelFactory();
-			if (!ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated("0000")) {
-				AdminModel admin = (AdminModel) fac.createAdmin(course);
-			}
-			AdminModel admin = (AdminModel) ModelRegister.getInstance().getRegisteredUser("0000");
-			admin.getCourses().add(course);
+//			AdminModelFactory fac = new AdminModelFactory();
+//			if (!ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated("0000")) {
+//				AdminModel admin = (AdminModel) fac.createAdmin(course);
+//			}
+//			AdminModel admin = (AdminModel) ModelRegister.getInstance().getRegisteredUser("0000");
+//			admin.getCourses().add(course);
 			return course;
 			
 		}catch(IOException ioe){

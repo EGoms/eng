@@ -46,7 +46,7 @@ public class AdminModelFactory implements SystemUserModelFactory {
 	 * @param course - to link to the admin
 	 * @return AdminModel with the class added to list of classes it oversees
 	 */
-	public AdminModel createAdmin(ICourseOffering course) {
+	public AdminModel createAdmin() {
 		AdminModel admin;
 		if (!ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated("0000")) {
 			admin = new AdminModel();
@@ -56,10 +56,9 @@ public class AdminModelFactory implements SystemUserModelFactory {
 			List<ICourseOffering> courseList = new ArrayList<ICourseOffering>();
 			admin.setCourses(courseList);
 			ModelRegister.getInstance().registerUser(admin.getID(), admin);
+			return admin;
 		}
 		admin = (AdminModel) ModelRegister.getInstance().getRegisteredUser("0000");
-		if (admin.getCourses().contains(course))
-			admin.getCourses().add(course);
 		return admin;
 	}
 

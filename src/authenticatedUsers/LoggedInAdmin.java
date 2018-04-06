@@ -23,6 +23,8 @@ import offerings.CourseOffering;
 import offerings.ICourseOffering;
 import offerings.OfferingFactory;
 import registrar.ModelRegister;
+import systemUserModelFactories.AdminModelFactory;
+import systemUsers.AdminModel;
 import systemUsers.InstructorModel;
 import systemUsers.StudentModel;
 
@@ -32,7 +34,7 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 	private String surname;
 	private String ID;
 	private AuthenticationToken authenticationToken;
-	private String type;
+	private String type = "Admin";
 	
 	public String getName() {
 		return name;
@@ -68,7 +70,7 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 
 	@Override
 	public String getType() {
-		return this.type = "Admin";
+		return this.type;
 	}
 	
 	/**
@@ -81,6 +83,8 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 			System.out.println("You are not an admin, how did you get here?");
 			return;
 		}
+		AdminModelFactory adminFactory = new AdminModelFactory();
+		AdminModel admin = adminFactory.createAdmin();
 		OfferingFactory factory = new OfferingFactory();
 		BufferedReader reader = new BufferedReader(new FileReader(new File("note_1.txt")));
 		CourseOffering course =  factory.createCourseOffering(reader);
@@ -88,6 +92,12 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 		reader = new BufferedReader(new FileReader(new File("note_2.txt")));
 		course = factory.createCourseOffering(reader);
 		reader.close();
+		
+		//add courses to the admin's list
+		for (CourseOffering icourse : ModelRegister.getInstance().getAllCourses())
+			admin.getCourses().add(icourse);
+		
+		System.out.println(admin.getCourses());
 		
 		for(CourseOffering course1 : ModelRegister.getInstance().getAllCourses()){
 			System.out.println("ID : " + course1.getCourseID() + "\nCourse name : " + course1.getCourseName() + "\nSemester : " + 
@@ -111,6 +121,8 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 	 * @throws IOException
 	 */
 	public void restart() throws IOException {
+		AdminModelFactory adminF = new AdminModelFactory();
+		AdminModel admin = adminF.createAdmin();
 		OfferingFactory fact = new OfferingFactory();
 		File dir = new File("./");
 		for (File file : dir.listFiles()) {
@@ -118,8 +130,10 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				CourseOffering course = fact.createCourseOffering(reader);
 				reader.close();
+				admin.getCourses().add(course);
 			}
 		}
+		System.out.println(admin.getCourses());
 				
 	}
 	/**

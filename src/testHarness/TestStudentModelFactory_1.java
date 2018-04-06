@@ -74,9 +74,11 @@ public class TestStudentModelFactory_1 {
 		//admin.start();
 		admin.restart();
 		
+//		AdminModel adm = (AdminModel) ModelRegister.getInstance().getRegisteredUser("0000");
+//		System.out.println(adm.getCourses());
 		server.login();
-		LoggedInAdmin ad = (LoggedInAdmin) server.getLoggedInUser("0000");
-		ad.stop();
+		
+		admin.stop();
 		List<LoggedInAuthenticatedUser> loggedIn = server.getLoggedInUsers();
 		List<LoggedInStudent> students = server.getLoggedInStudents();
 		List<LoggedInInstructor> instructors = server.getLoggedInInstructors();
@@ -112,7 +114,7 @@ public class TestStudentModelFactory_1 {
 //				instructorOp.calcGrade(instructor);
 //		}
 		
-		ad.stop();
+		admin.stop();
 	}
 }
 /**
