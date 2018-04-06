@@ -103,8 +103,6 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 				icourse.getStudentsEnrolled().add(target);		//add the student to the course's student
 			}
 		}
-		//reader.close();
-		//System.out.println(target.getCoursesEnrolled());
 	}
 	
 	public void selectNotification() {
@@ -132,8 +130,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 			}
 		
 		target.setNotificationType(type); //set the notification type for the student
-		System.out.println(target.getNotificationType());
-		//reader.close();
+		System.out.println("Your notification type is: " + target.getNotificationType());
 	}
 	/**
 	 * this method changes the notification type for the student to the parameter
@@ -157,17 +154,17 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 	 */
 	public void printRecord() {
 		StudentModel target = verifyStudent(this.authenticationToken);
-		System.out.println(target.getCoursesEnrolled());
-		for (ICourseOffering icourse : target.getCoursesEnrolled()) {
-			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(icourse))
-				System.out.println("No marks for this student");
-			else {
-				Marks marks = target.getPerCourseMarks().get(icourse);
-				System.out.println("Grades for " + target.getName() + " " + target.getSurname() + " in " + icourse.getCourseName());
+		
+		for (ICourseOffering course : target.getCoursesEnrolled()) {
+			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(course)) {
+				System.out.println("No marks for the student");
+			} else {
+				System.out.println("Grades for " + target.getName()+ " "+target.getSurname() + " in " + course.getCourseName());
+				Marks marks = target.getPerCourseMarks().get(course);
 				marks.initializeIterator();
 				while (marks.hasNext()) {
 					Entry<String, Double> current = marks.getNextEntry();
-					System.out.println(current.getKey()+ " " + current.getValue());
+					System.out.println(current.getKey() + " " + current.getValue());
 				}
 			}
 		}
@@ -177,9 +174,10 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 //		}
 		
 	}
+	
 	private StudentModel verifyStudent(AuthenticationToken token) {
 		StudentModel student = null;
-		if (token.getUserType().equals("Student")) {
+		if (token.getUserType().equalsIgnoreCase("Student")) {
 			student = ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated(token.getTokenID()) ? (StudentModel) ModelRegister.getInstance().getRegisteredUser(token.getTokenID()) : null;
 		}
 		return student;

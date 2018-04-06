@@ -71,9 +71,11 @@ public class TestStudentModelFactory_1 {
 		LoggedInStudentOperation studentOp = new LoggedInStudentOperation();
 		LoggedInInstructorOperation instructorOp = new LoggedInInstructorOperation();
 		
-		adminOp.start(admin);
+		admin.start();
 		
 		server.login();
+		LoggedInAdmin ad = (LoggedInAdmin) server.getLoggedInUser("0000");
+		//ad.stop();
 		List<LoggedInAuthenticatedUser> loggedIn = server.getLoggedInUsers();
 		List<LoggedInStudent> students = server.getLoggedInStudents();
 		List<LoggedInInstructor> instructors = server.getLoggedInInstructors();
@@ -88,9 +90,13 @@ public class TestStudentModelFactory_1 {
 		//	studentOp.enroll(stud);
 		//}
 		
-		for (LoggedInStudent stud : students)
+
+		for (LoggedInInstructor inst : instructors)
+			inst.calcGrade();
+		for (LoggedInStudent stud : students) {
 			stud.printRecord();
-		
+		}
+
 		//for all students in logged in users call enroll
 //		for (LoggedInAuthenticatedUser student : loggedIn) {
 //			if (student.getAuthenticationToken().getUserType().equals("Student")) {
@@ -103,6 +109,8 @@ public class TestStudentModelFactory_1 {
 //			if (instructor.getAuthenticationToken().getUserType().equals("Instructor"))
 //				instructorOp.calcGrade(instructor);
 //		}
+		
+		ad.stop();
 	}
 }
 /**

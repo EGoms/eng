@@ -39,6 +39,7 @@ public class LogInServer {
 	private LogInServer() {
 		//TODO: Parse a file and save passwords/username in a structure for look up when logging in
 		logInInfo = new HashMap<String, String>();
+		logInInfo.put("0000", "pass");
 		register = new HashMap<String, LoggedInAuthenticatedUser>();
 		BufferedReader in;
 		String line;
@@ -46,8 +47,8 @@ public class LogInServer {
 			in = new BufferedReader(new FileReader(new File("file.txt")));
 			while ((line = in.readLine()) != null) {
 				String id = line.split("\t")[0];
-				String type = line.split("\t")[1];
-				logInInfo.put(id, type);
+				String pw = line.split("\t")[1];
+				logInInfo.put(id, pw);
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage() + " exception thrown at LogInServer");
