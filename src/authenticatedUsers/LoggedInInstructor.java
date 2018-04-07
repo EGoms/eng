@@ -65,14 +65,14 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 	public void addMark() {
 		InstructorModel teacher = verifyInstructor(this.authenticationToken);
 		Scanner reader = new Scanner(System.in);
-		System.out.println(teacher.getName() + " " + teacher.getSurname());
+		System.out.println(teacher.getName() + " " + teacher.getSurname() + " please select a course");
 	
 		for (ICourseOffering icourse : teacher.getIsTutorOf())
 			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
 		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
-		
+		System.out.println("Please select an enrolled student: ");
 		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		
@@ -86,6 +86,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 
 		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
 		System.out.println("You have 1 new " + student.getNotificationType() + " notification");
+		System.out.println();
 		line = reader.next().toUpperCase();
 		if (line.equalsIgnoreCase("Y"))
 			addMark();
@@ -185,7 +186,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		double grade = reader.nextDouble();
 		for (String s : possibilities) {
 			if (line.equalsIgnoreCase(s))
-				student.getPerCourseMarks().get(student).addToEvalStrategy(line, grade);
+				student.getPerCourseMarks().get(course).addToEvalStrategy(line, grade);
 		}
 	}
 	public void calcGrade() {
@@ -253,8 +254,12 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 				Entry<String, Double> entry = marks.getNextEntry();
 				System.out.println(entry.getKey() + " " + entry.getValue());
 			}
+			System.out.print("Final Mark - ");
+			course.calculateFinalGrade(student.getID());
+			System.out.println();
 		} catch (NullPointerException e) {
 			System.out.println("No marks for this student");
+			System.out.println();
 			return;
 		}
 	}
@@ -269,6 +274,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 					Entry<String, Double> entry = marks.getNextEntry();
 					System.out.println(entry.getKey() + " " + entry.getValue());
 				}
+				course.calculateFinalGrades();
 			} catch (NullPointerException e) {
 				System.out.println("No marks for this student");
 			}

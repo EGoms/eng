@@ -70,19 +70,22 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 			System.out.println("Student is not registered"); //if there is no student 
 			return;
 		}
-		System.out.println(target.getName() +" "+target.getSurname()); //print the name of the student doing the operation
+		
 		Scanner reader = new Scanner(System.in);					//set up a reader for input
 		
 		if (target.getCoursesEnrolled() == null) {				//if the target isn't enrolled in any courses make a new list of courses
 			target.setCoursesEnrolled(new ArrayList<ICourseOffering>());
 		}
 		for (ICourseOffering icourse : target.getCoursesAllowed()) { //get the courses that the student is allowed to enroll in
+			if (target.getCoursesEnrolled().contains(icourse))
+				 return;
+			System.out.println(target.getName() +" "+target.getSurname()); //print the name of the student doing the operation
 			System.out.println("Do you wish to enroll in: " +  icourse.getCourseName() + "?");	//prompt if they want to enrll
 			System.out.println("1 for yes, 0 for no");
 			int line = reader.nextInt(); //get input
 			if (line == 0) //if they don't want to enroll go forward, to next course, or done with enroll for the student
 				continue;
-			System.out.println("Select Enrollment status: \n1) FC \n2) FA \n3) PC \n4) PA");
+			System.out.println("Select Enrollment status: \n1) FC \n2) FA \n3) PC \n4) PA, default is: " + target.getEvaluationEntities().get(icourse));
 			line = reader.nextInt(); //read enrollment status
 			EvaluationTypes type;
 			switch (line) { //switch on the input to select the type as one of the enumerated values
@@ -94,7 +97,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 						break;
 				case 4: type = EvaluationTypes.PART_AUDIT;
 						break;
-				default: type = EvaluationTypes.FULL_CREDIT;
+				default: type = target.getEvaluationEntities().get(icourse);
 						break;
 			}
 			if (!target.getCoursesEnrolled().contains(icourse)) { //after all that is done, if the student isn't already enrolled
@@ -103,6 +106,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 				icourse.getStudentsEnrolled().add(target);		//add the student to the course's student
 			}
 		}
+		addNotification(NotificationTypes.EMAIL);
 	}
 	
 	public void selectNotification() {
@@ -142,7 +146,7 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 			System.out.println("User not in Register");
 			return;
 		}
-		System.out.println(target.getName() + " " + target.getSurname());
+//		System.out.println(target.getName() + " " + target.getSurname());
 		target.setNotificationType(notification);
 		
 	}
@@ -157,7 +161,8 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 		
 		for (ICourseOffering course : target.getCoursesEnrolled()) {
 			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(course)) {
-				System.out.println("No marks for the student");
+				System.out.println("No marks for " + target.getName()+ " in "+course.getCourseName());
+				System.out.println();
 			} else {
 				System.out.println("Grades for " + target.getName()+ " "+target.getSurname() + " in " + course.getCourseName());
 				try {
@@ -167,8 +172,12 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 						Entry<String, Double> current = marks.getNextEntry();
 						System.out.println(current.getKey() + " " + current.getValue());
 					}
+					System.out.print("Final mark - ");
+					course.calculateFinalGrade(this.getID());
+					System.out.println();
 				} catch (NullPointerException e) {
-					System.out.println("No grades yet");
+					System.out.println("Not all entities have marks");
+					System.out.println();
 				}
 			}
 		}

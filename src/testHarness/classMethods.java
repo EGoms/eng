@@ -12,10 +12,16 @@ public class classMethods {
 		
 		AbstractionLayer methods = new AbstractionLayer();
 		methods.start(admin);
-		//server.login();
-		//methods.enroll();
-		LoggedInStudent student = (LoggedInStudent) server.login("3456", "pass");
-		methods.enroll(student);
+		server.loginMany();
+		methods.enroll();
+		methods.addMark();
+		methods.printRecord();
+		methods.printClass();
+		methods.enroll();
+		methods.addMark();
+		methods.printRecord();
+		//LoggedInStudent student = (LoggedInStudent) server.login("3456", "pass");
+		//methods.enroll(student);
 		methods.stop(admin);
 
 	}

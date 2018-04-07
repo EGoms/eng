@@ -90,32 +90,37 @@ public class LogInServer {
 	 * @param id
 	 * @return authenticationToken set with the user id and type
 	 */
-	public LoggedInAuthenticatedUser login(String id, String pw) {
+	public LoggedInAuthenticatedUser login() {
+		Scanner reader = new Scanner(System.in);
+		System.out.println("Enter user ID: ");
+		String line = reader.next();
+		System.out.println("Enter password: ");
+		String pw = reader.next();
 		LoggedInUserFactory fact = new LoggedInUserFactory();
-		if (!verify(id, pw)) {
-			if (register.containsKey(id)) {
-				return register.get(id);
+		if (!verify(line, pw)) {
+			if (register.containsKey(line)) {
+				return register.get(line);
 			}
 			System.out.println("User not registered");
 			return null;
 		}
 		
-		if (id.equals("0000")) {
+		if (line.equals("0000")) {
 			AuthenticationToken token = new AuthenticationToken();
-			token.setTokenID(id);
+			token.setTokenID(line);
 			token.setUserType("Admin");
 			onOff = 1;
 			LoggedInAdmin admin = fact.createLoggedInAdmin(token);
-			register.put(id, admin);
+			register.put(line, admin);
 			//register.put(id, token);
 			return admin;
 		}
 		if (onOff == 1) {
 			AuthenticationToken token = new AuthenticationToken();
-			token.setTokenID(id);
-			token.setUserType(ModelRegister.getInstance().getRegisteredUser(id).getType());
+			token.setTokenID(line);
+			token.setUserType(ModelRegister.getInstance().getRegisteredUser(line).getType());
 			LoggedInAuthenticatedUser user = fact.createAuthenticatedUser(token);
-			register.put(id, user);
+			register.put(line, user);
 			return user;
 		} else {
 			System.out.println("Admin must log in before users");
@@ -153,7 +158,7 @@ public class LogInServer {
 			return null;
 		}
 	}
-	public void login() {
+	public void loginMany() {
 		LoggedInAuthenticatedUser user;
 		LoggedInUserFactory factory = new LoggedInUserFactory();
 		Scanner reader = new Scanner(System.in);
@@ -180,7 +185,7 @@ public class LogInServer {
 			System.out.println("Would you like to log in another user? (y/n): ");
 			String choice = reader.next().toUpperCase();
 			if (choice.equals("Y")) //call again if we want to. all users get added to register
-				login();
+				loginMany();
 		} else {
 			System.out.println("Admin must log in first");
 			return;

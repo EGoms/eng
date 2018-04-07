@@ -88,4 +88,34 @@ public class AbstractionLayer {
 			e.printStackTrace();
 		}
 	}
+	
+	public void addMark() {
+		for (LoggedInInstructor instructor : LogInServer.getServer().getLoggedInInstructors())
+			instructor.addMark();
+	}
+	public void modifyMark() {
+		for (LoggedInInstructor instructor : LogInServer.getServer().getLoggedInInstructors())
+			instructor.modifyMark();
+	}
+	public void calcGrade() {
+		for (LoggedInInstructor instructor : LogInServer.getServer().getLoggedInInstructors())
+			instructor.calcGrade();
+	}
+	public void printClass() {
+		for (LoggedInInstructor instructor : LogInServer.getServer().getLoggedInInstructors())
+			instructor.printRecord();
+	}
+	
+	public void addMark(LoggedInInstructor instructor) {
+		instructor.addMark();
+	}
+	public void modifyMark(LoggedInInstructor instructor) {
+		instructor.modifyMark();
+	}
+	public void calcGrade(LoggedInInstructor instructor) {
+		instructor.calcGrade();
+	}
+	public void printClass(LoggedInInstructor instructor) {
+		instructor.printRecord();
+	}
 }
