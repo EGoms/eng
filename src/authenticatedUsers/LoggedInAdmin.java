@@ -173,12 +173,14 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 						while (marks.hasNext()) {
 							Entry<String, Double> next = marks.getNextEntry();
 							grades += next.getKey() + "\t" + next.getValue() + "\n";
-							numGrades++;
+							numGrades += 1;
 						}
-						writer.write(numGrades);
+						writer.write(String.valueOf(numGrades));
+						writer.write("\n");
 						writer.write(grades);
 					} catch (NullPointerException e) {
-						writer.write(0);
+						writer.write("0");
+						writer.write("\n");
 						continue;
 					}
 				}

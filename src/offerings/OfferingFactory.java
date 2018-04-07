@@ -116,9 +116,11 @@ public class OfferingFactory {
 					}
 					Marks marks = new Marks();
 					student.getPerCourseMarks().put(course, marks);
-					int numGrades = file.read();
-					for (int j = 0; j < numGrades; j++) {
+					String numGrades = file.readLine();
+					for (int j = 0; j < Integer.parseInt(numGrades); j++) {
 						line = file.readLine();
+						if (line == null)
+							return;
 						student.getPerCourseMarks().get(course).addToEvalStrategy(line.split("\t")[0], Double.parseDouble(line.split("\t")[1]));
 					}
 				}
