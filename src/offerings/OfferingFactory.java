@@ -4,10 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import authenticationServer.LogInServer;
 import customDatatypes.EvaluationTypes;
+import customDatatypes.Marks;
 import customDatatypes.Weights;
 import registrar.ModelRegister;
 import systemUserModelFactories.AdminModelFactory;
@@ -91,5 +93,42 @@ public class OfferingFactory {
 		}
 	}
 	
+	public void reenroll(BufferedReader file) {
+		try {
+			String line = file.readLine();
+			while (line != null) {
+				CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line.split("\t")[1]);
+				String number = file.readLine();
+				for (int i = 0; i < Integer.parseInt(number); i++) {
+					line = file.readLine();
+					StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line.split("\t")[2]);
+					course.getStudentsEnrolled().add(student);
+					if (student.getCoursesEnrolled() == null) {
+						List<ICourseOffering> allowed = new ArrayList<ICourseOffering>();
+						allowed.add(course);
+						student.setCoursesEnrolled(allowed);
+					} else {
+						student.getCoursesEnrolled().add(course);
+					}
+					if (student.getPerCourseMarks() == null) {
+						Map<ICourseOffering, Marks> grades = new HashMap<ICourseOffering, Marks>();
+						student.setPerCourseMarks(grades);
+					}
+					Marks marks = new Marks();
+					student.getPerCourseMarks().put(course, marks);
+					int numGrades = file.read();
+					for (int j = 0; j < numGrades; j++) {
+						line = file.readLine();
+						student.getPerCourseMarks().get(course).addToEvalStrategy(line.split("\t")[0], Double.parseDouble(line.split("\t")[1]));
+					}
+				}
+				line = file.readLine();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 }

@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 
 import authenticationServer.AuthenticationToken;
 import customDatatypes.EvaluationTypes;
+import customDatatypes.Marks;
 import customDatatypes.Weights;
 import offerings.CourseOffering;
 import offerings.ICourseOffering;
@@ -127,7 +128,7 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 		OfferingFactory fact = new OfferingFactory();
 		File dir = new File("./");
 		for (File file : dir.listFiles()) {
-			if (file.isFile() && (file.getName().contains("class_"))) {
+			if (file.isFile() && (file.getName().contains("note_"))) {
 				BufferedReader reader = new BufferedReader(new FileReader(file));
 				CourseOffering course = fact.createCourseOffering(reader);
 				reader.close();
@@ -135,6 +136,13 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 			}
 		}
 		System.out.println(admin.getCourses());
+		for (File file : dir.listFiles()) {
+			if (file.isFile() && (file.getName().contains("class_"))) {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				fact.reenroll(reader);
+				reader.close();
+			}
+		}
 				
 	}
 	/**
@@ -143,73 +151,41 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public void stop() throws IOException, FileNotFoundException {
+	public void stop() {
 		int i = 1;
-		for (CourseOffering x : ModelRegister.getInstance().getAllCourses()) {
-			//PrintWriter writer = new PrintWriter("class_"+ i+".txt", "UTF-8");
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter("class_" +i+".txt"))) {
+		for (CourseOffering course : ModelRegister.getInstance().getAllCourses()) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter("class_"+i+".txt"))) {
 				i++;
-				String toWrite = x.getCourseName() + "\t" + x.getCourseID() + "\t" + x.getSemester() + "\n";
+				String toWrite = course.getCourseName() + "\t" + course.getCourseID() + "\n";
 				writer.write(toWrite);
-				int instructors = x.getInstructor().size();
-				toWrite = "TUTOR" + "\t" + "LIST" + "\t" + instructors +"\n";
-				writer.write(toWrite);
-				
-				for (InstructorModel y : x.getInstructor()) {
-					toWrite = y.getName() + "\t" + y.getSurname() + "\t" + y.getID() + "\n";
+				int length = course.getStudentsEnrolled().size();
+				writer.write(String.valueOf(length));
+				writer.write("\n");
+				for (int j = 0; j < length; j++) {
+					StudentModel student = course.getStudentsEnrolled().get(j);
+					toWrite = student.getName() + "\t" + student.getSurname() + "\t" + student.getID() + "\n";
 					writer.write(toWrite);
-				}
-				
-				int studentsAllowed = x.getStudentsAllowedToEnroll().size();
-				int studentsEnrolled = x.getStudentsEnrolled().size();
-				
-				toWrite = "ELLIGIBLE" + "\t" + "STUDENTS" + "\t" + studentsAllowed + "\n";
-				writer.write(toWrite);
-				
-				for (StudentModel y : x.getStudentsAllowedToEnroll()) {
-					toWrite = y.getName() + "\t" + y.getSurname() + "\t" + y.getID() + "\t" + y.getEvaluationEntities().get(x).getText() + "\n";
-					writer.write(toWrite);
-				}
-				
-				toWrite = "EVALUATION" + "\t" + "ENTITIES" + "\n";
-				writer.write(toWrite);
-				
-				for (EvaluationTypes y : x.getEvaluationStrategies().keySet()) {
-					toWrite = y.getText() + "\n";
-					writer.write(toWrite);
-					List<String> lines = new ArrayList<String>();
-					//int length = x.getEvaluationStrategies().size();
-//					toWrite = "TOTAL" + "\t" + "ENTITIES:" + "\t" + length + "\n";
-//					writer.write(toWrite);
-					int length = 0;
-					
-					Weights assignments = x.getEvaluationStrategies().get(y);
-					assignments.initializeIterator();
-					while (assignments.hasNext()) {
-						length++;
-						Entry<String, Double> current = assignments.getNextEntry();
-						toWrite = current.getKey() + "\t" + current.getValue() + "\n";
-						lines.add(toWrite);
+					try {
+						String grades = "";
+						int numGrades = 0; 
+						Marks marks = student.getPerCourseMarks().get(course);
+						marks.initializeIterator();
+						while (marks.hasNext()) {
+							Entry<String, Double> next = marks.getNextEntry();
+							grades += next.getKey() + "\t" + next.getValue() + "\n";
+							numGrades++;
+						}
+						writer.write(numGrades);
+						writer.write(grades);
+					} catch (NullPointerException e) {
+						writer.write(0);
+						continue;
 					}
-					toWrite = "TOTAL" + "\t" + "ENTITIES:" + "\t" + length + "\n";
-					writer.write(toWrite);
-					
-					for (String str : lines) {
-						writer.write(str);
-					}
-					
-					
-				}
-				for (StudentModel z : x.getStudentsEnrolled()) {
-					toWrite = z.getName() + "\t" + z.getSurname() + "\t" + z.getID() + "\n";
-					writer.write(toWrite);
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
-				//writer.close();
+				
 			}
 		}
 		System.exit(0);
 	}
-	
 }

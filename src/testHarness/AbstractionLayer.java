@@ -71,12 +71,7 @@ public class AbstractionLayer {
 		}
 	}
 	public void stop(LoggedInAdmin admin) {
-		try {
-			admin.stop();
-		} catch (IOException e) {
-			System.out.println("File error");
-			e.printStackTrace();
-		}
+		admin.stop();
 	}
 	
 	public void addMark() {
