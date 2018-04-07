@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
-
+import java.util.Scanner;
 
 import authenticatedUsers.LoggedInAuthenticatedUser;
 import authenticatedUsers.LoggedInAdmin;
@@ -37,7 +37,7 @@ public class AbstractionLayer {
 			student.enroll();
 	}
 	
-	public void enroll(LoggedInStudent student) {
+	private void enroll(LoggedInStudent student) {
 		student.enroll();
 	}
 	
@@ -46,10 +46,13 @@ public class AbstractionLayer {
 			student.addNotification(type);
 	}
 	
-	public void addNotification(LoggedInStudent student, NotificationTypes type) {
+	private void addNotification(LoggedInStudent student, NotificationTypes type) {
 		student.addNotification(type);
 	}
 	
+	private void selectNotification(LoggedInStudent student) {
+		student.selectNotification();
+	}
 	public void selectNotification() {
 		for (LoggedInStudent student : LogInServer.getServer().getLoggedInStudents())
 			student.selectNotification();
@@ -60,7 +63,7 @@ public class AbstractionLayer {
 			student.printRecord();
 	}
 	
-	public void printRecord(LoggedInStudent student) {
+	private void printRecord(LoggedInStudent student) {
 		student.printRecord();
 	}
 	
@@ -106,16 +109,97 @@ public class AbstractionLayer {
 			instructor.printRecord();
 	}
 	
-	public void addMark(LoggedInInstructor instructor) {
+	private void addMark(LoggedInInstructor instructor) {
 		instructor.addMark();
 	}
-	public void modifyMark(LoggedInInstructor instructor) {
+	private void modifyMark(LoggedInInstructor instructor) {
 		instructor.modifyMark();
 	}
-	public void calcGrade(LoggedInInstructor instructor) {
+	private void calcGrade(LoggedInInstructor instructor) {
 		instructor.calcGrade();
 	}
-	public void printClass(LoggedInInstructor instructor) {
+	private void printClass(LoggedInInstructor instructor) {
 		instructor.printRecord();
+	}
+	
+	private void instructor(LoggedInInstructor instructor) {
+		Scanner reader = new Scanner(System.in);
+		System.out.println("1) add Mark \n2) modifyMark \n3) calculate Grade \n4) print Record\n");
+		int choice = reader.nextInt();
+		switch (choice) {
+		case 1: addMark(instructor);
+				break;
+		case 2: modifyMark(instructor);
+				break;
+		case 3: calcGrade(instructor);
+				break;
+		case 4: printClass(instructor);
+				break;
+		default: System.out.println("Try again");
+				instructor(instructor);
+				break;
+		}
+	}
+	private void student(LoggedInStudent student) {
+		Scanner reader = new Scanner(System.in);
+		System.out.println("1) enroll \n2) select Notification \n3) add Notification \n4) print Record\n");
+		int choice = reader.nextInt();
+		switch (choice) {
+		case 1: enroll(student);
+				break;
+		case 2: selectNotification(student);
+				break;
+		case 3: System.out.println("Enter notification type");
+				String one = reader.next().toLowerCase();
+				NotificationTypes type;
+				switch (one) {
+				case "email": type = NotificationTypes.EMAIL;
+								break;
+				case "cellphone": type = NotificationTypes.CELLPHONE;
+							break;
+				case "pigeon_post": type = NotificationTypes.PIGEON_POST;
+							break;
+				default: type = NotificationTypes.EMAIL;
+				}
+				addNotification(student, type);
+		case 4: printRecord(student);
+				break;
+		default: System.out.println("Try again");
+				student(student);
+				break;
+		}
+	}
+	private void admin(LoggedInAdmin admin) {
+		Scanner reader = new Scanner(System.in);
+		System.out.println("1) start \n2) restart \n3) stop\n");
+		int choice = reader.nextInt();
+		switch (choice) {
+		case 1: start(admin);
+				break;
+		case 2: restart(admin);
+				break;
+		case 3: stop(admin);
+				break;
+		default: System.out.println("Try again");
+				admin(admin);
+				break;
+		}
+	}
+	public void select(LoggedInAuthenticatedUser user) {
+		Scanner reader = new Scanner(System.in);
+		switch (user.getType().toLowerCase()) {
+		case "admin": admin((LoggedInAdmin) user);
+					break;
+		case "instructor": instructor((LoggedInInstructor) user);
+						break;
+		case "student" : student((LoggedInStudent) user);
+					break;
+		default: 	System.out.println("Def");
+					break;
+		}
+		System.out.println("would you like to perform another operation? (y/n) ");
+		String line = reader.next().toUpperCase();
+		if (line.equalsIgnoreCase("Y"))
+			select(user);
 	}
 }
