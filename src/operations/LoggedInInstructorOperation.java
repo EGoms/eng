@@ -23,32 +23,34 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 	public void addMark(LoggedInAuthenticatedUser user) {
 		InstructorModel teacher = verifyInstructor(user);
 		Scanner reader = new Scanner(System.in);
+		System.out.println(teacher.getName() + " " + teacher.getSurname() + " please select a course");
 	
-		for (ICourseOffering course : teacher.getIsTutorOf())
-			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
-		CourseOffering realCourse = ModelRegister.getInstance().getRegisteredCourse(line);
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 		
-		for (StudentModel student : realCourse.getStudentsEnrolled()) {
+		if (course.getStudentsEnrolled().isEmpty())//no students
+			return;
+		
+		System.out.println("Please select an enrolled student: ");
+		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
-		}
 		
 		System.out.println("Enter Student ID: ");
 		line = reader.next();
-		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
-		getMark(realStudent, realCourse, reader);
 		
-//		Marks x = realStudent.getPerCourseMarks().get(realCourse);
-//		x.initializeIterator();
-//		while (x.hasNext()) {
-//			Entry<String, Double> thing = x.getNextEntry();
-//			System.out.println(thing);
-//		}
+		getMark(student, course, reader);
+		
+
 		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
+		System.out.println("You have 1 new " + student.getNotificationType() + " notification");
+		System.out.println();
 		line = reader.next().toUpperCase();
-		if (line.equals("Y"))
+		if (line.equalsIgnoreCase("Y"))
 			addMark(user);
 			
 	}
@@ -56,32 +58,54 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 		Map<ICourseOffering, Marks> grades;
 		Marks mark = new Marks();
 		if (student.getPerCourseMarks() == null) {
-			System.out.println("Type of assessment: \n");
+
+			List<String> possibilities = new ArrayList<String>();
+			Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
+			stuff.initializeIterator();
+			while (stuff.hasNext()) {
+				Entry<String, Double> current = stuff.getNextEntry();
+				possibilities.add(current.getKey());
+				System.out.println(current.getKey());
+			}
+			System.out.println("Pick one of the above");
 			String line = reader.next().toUpperCase();
-			System.out.println("Mark: \n");
-			Double grade = reader.nextDouble();
+			System.out.println("Enter grade: ");
+			double grade = reader.nextDouble();
 			mark.addToEvalStrategy(line, grade);
-			grades = new HashMap<ICourseOffering, Marks>();
-			student.setPerCourseMarks(grades);
-			student.getPerCourseMarks().put(course, mark);
+			for (String s : possibilities) {
+				if (line.equalsIgnoreCase(s)) {
+					grades = new HashMap<ICourseOffering, Marks>();
+					grades.put(course, mark);
+					student.setPerCourseMarks(grades);
+				}
+			}
 		} else if (!student.getPerCourseMarks().containsKey(course)) {
-			System.out.println("Type of assessment: \n");
+			List<String> possibilities = new ArrayList<String>();
+			Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
+			stuff.initializeIterator();
+			while (stuff.hasNext()) {
+				Entry<String, Double> current = stuff.getNextEntry();
+				possibilities.add(current.getKey());
+				System.out.println(current.getKey());
+			}
+			System.out.println("Pick one of the above");
 			String line = reader.next().toUpperCase();
-			System.out.println("Mark: \n");
+			System.out.println("Enter grade: ");
 			Double grade = reader.nextDouble();
-			mark.addToEvalStrategy(line, grade);
-			student.getPerCourseMarks().put(course, mark);
+			for (String s : possibilities) {
+				if (line.equalsIgnoreCase(s)) {
+					mark.addToEvalStrategy(line, grade);
+					student.getPerCourseMarks().put(course, mark);
+				}
+			}
 		} else {
-			System.out.println("Type of assessment: \n");
-			String line = reader.next().toUpperCase();
-			System.out.println("Mark: \n");
-			Double grade = reader.nextDouble();
-			//mark.addToEvalStrategy(line, grade);
-			student.getPerCourseMarks().get(course).addToEvalStrategy(line, grade);
+			helper(course, student, reader);
+
 		}
+		
 		System.out.println("Would you like to enter another grade? (y/n)");
 		String line = reader.next().toUpperCase();
-		if (line.equals("Y"))
+		if (line.equalsIgnoreCase("Y"))
 			getMark(student, course, reader);
 		else
 			return;
@@ -92,63 +116,83 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 		Scanner reader = new Scanner(System.in);
 	
 		//select a course
-		for (ICourseOffering course : teacher.getIsTutorOf())
-			System.out.println(course.getCourseName() + "\t" + course.getCourseID());
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
-		CourseOffering realCourse = ModelRegister.getInstance().getRegisteredCourse(line);
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
+		
+		if (course.getStudentsEnrolled().isEmpty())//no students
+			return;
 		
 		//select a student
-		for (StudentModel student : realCourse.getStudentsEnrolled()) 
+		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		System.out.println("Enter Student ID: ");
 		line = reader.next();
-		StudentModel realStudent = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
 		
-		//Weights = the eval strats (assign, etc) for the course for the specific student?
-		//present the possibilities for the specified evaluation strategy and have user enter one to change
-		//also adds the mark if its not there
-		List<String> possibilities = new ArrayList<String>();
-		Weights stuff = realCourse.getEvaluationStrategies().get(realStudent.getEvaluationEntities().get(realCourse));
-		stuff.initializeIterator();
-		while (stuff.hasNext()) {
-			Entry<String, Double> current = stuff.getNextEntry();
-			possibilities.add(current.getKey());
-			System.out.println(current.getKey());
-		}
-		
-		System.out.println("Pick one of the above");
-		line = reader.next().toUpperCase();
-		System.out.println("Enter new grade: ");
-		double grade = reader.nextDouble();
-		for (String s : possibilities) {
-			if (line.equalsIgnoreCase(s))
-				realStudent.getPerCourseMarks().get(realCourse).addToEvalStrategy(line, grade);
-		}
-		//realStudent.getPerCourseMarks().get(realCourse).addToEvalStrategy(line, grade);
+		helper(course, student, reader);
 	}
 
-	@Override
 	public void calcGrade(LoggedInAuthenticatedUser user) {
-		//call course . calculate grade
+		InstructorModel teacher = verifyInstructor(user);
+		Scanner reader = new Scanner(System.in);
+		//select a course
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
+		System.out.println("Enter class ID: ");
+		String line = reader.next().toUpperCase();
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 		
+		if (course.getStudentsEnrolled().isEmpty())//no students
+			return;
+		
+		//select a student
+		for (StudentModel student : course.getStudentsEnrolled()) 
+			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
+		System.out.println("Enter Student ID: ");
+		line = reader.next();
+		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		try {
+			course.calculateFinalGrade(student.getID());
+		} catch (NullPointerException e) {
+			System.out.println("Not all marks are present");
+			return;
+		}
 	}
 
-	@Override
 	public void printRecord(LoggedInAuthenticatedUser user) {
-		// TODO Auto-generated method stub
+		InstructorModel teacher = verifyInstructor(user);
+		Scanner reader = new Scanner(System.in);
 		
-	}
-
-	@Override
-	public void printIndividualRecord(LoggedInAuthenticatedUser user) {
-		// TODO Auto-generated method stub
+		for (ICourseOffering icourse : teacher.getIsTutorOf())
+			System.out.println(icourse.getCourseName() + "\t" + icourse.getCourseID());
+		System.out.println("Enter class ID: ");
+		String line = reader.next().toUpperCase();
+		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 		
-	}
-
-	@Override
-	public void printMultiple(LoggedInAuthenticatedUser user) {
-		// TODO Auto-generated method stub
+		if (course.getStudentsEnrolled().isEmpty()) {//no students
+			System.out.println("No students enrolled in this course");
+			return;
+		}
+//		for (StudentModel student : course.getStudentsEnrolled()) 
+//			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
+		System.out.println("Would you like to print the record for a specific student(0) or the whole class(1)?: ");
+		int choice = reader.nextInt();
+		switch (choice) {
+			case 0: printSingle(course, reader);
+					break;
+			case 1: printAll(course);
+					break;
+			default:System.out.println("Single");
+					printSingle(course, reader);
+					break;
+		}
+//		System.out.println("Enter Student ID: ");
+//		line = reader.next();
+//		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		
 		
 	}
 	
@@ -166,6 +210,65 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 			student = ModelRegister.getInstance().checkIfUserHasAlreadyBeenCreated(user.getID()) ? (StudentModel) ModelRegister.getInstance().getRegisteredUser(user.getID()) : null;
 		}
 		return student;
+	}
+	
+	private void helper(CourseOffering course, StudentModel student, Scanner reader) {
+		List<String> possibilities = new ArrayList<String>();
+		Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
+		stuff.initializeIterator();
+		while (stuff.hasNext()) {
+			Entry<String, Double> current = stuff.getNextEntry();
+			possibilities.add(current.getKey());
+			System.out.println(current.getKey());
+		}
+		
+		System.out.println("Pick one of the above");
+		String line = reader.next().toUpperCase();
+		System.out.println("Enter grade: ");
+		double grade = reader.nextDouble();
+		for (String s : possibilities) {
+			if (line.equalsIgnoreCase(s))
+				student.getPerCourseMarks().get(course).addToEvalStrategy(line, grade);
+		}
+	}
+	private void printSingle(CourseOffering course, Scanner reader) {
+		for (StudentModel student : course.getStudentsEnrolled()) 
+			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
+		String line = reader.next();
+		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
+		System.out.println("------Marks for " + student.getName() + " " + student.getSurname() + " in " + course.getCourseName() + "------");
+		try {
+			Marks marks = student.getPerCourseMarks().get(course);
+			marks.initializeIterator();
+			while (marks.hasNext()) {
+				Entry<String, Double> entry = marks.getNextEntry();
+				System.out.println(entry.getKey() + " " + entry.getValue());
+			}
+			System.out.print("Final Mark - ");
+			course.calculateFinalGrade(student.getID());
+			System.out.println();
+		} catch (NullPointerException e) {
+			System.out.println("No marks for this student");
+			System.out.println();
+			return;
+		}
+	}
+	
+	private void printAll(CourseOffering course) {
+		for (StudentModel student : course.getStudentsEnrolled()) {
+			try {
+				System.out.println("------Marks for " + student.getName() + " " + student.getSurname() + " in " + course.getCourseName() + "------");
+				Marks marks = student.getPerCourseMarks().get(course);
+				marks.initializeIterator();
+				while (marks.hasNext()) {
+					Entry<String, Double> entry = marks.getNextEntry();
+					System.out.println(entry.getKey() + " " + entry.getValue());
+				}
+				course.calculateFinalGrades();
+			} catch (NullPointerException e) {
+				System.out.println("No marks for this student");
+			}
+		}
 	}
 
 }

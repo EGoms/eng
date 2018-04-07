@@ -146,8 +146,8 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 	public void stop() throws IOException, FileNotFoundException {
 		int i = 1;
 		for (CourseOffering x : ModelRegister.getInstance().getAllCourses()) {
-			PrintWriter writer = new PrintWriter("class_"+ i+".txt", "UTF-8");
-			//try (BufferedWriter writer = new BufferedWriter(new FileWriter("class_" +i+".txt"))) {
+			//PrintWriter writer = new PrintWriter("class_"+ i+".txt", "UTF-8");
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter("class_" +i+".txt"))) {
 				i++;
 				String toWrite = x.getCourseName() + "\t" + x.getCourseID() + "\t" + x.getSemester() + "\n";
 				writer.write(toWrite);
@@ -204,10 +204,12 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 					toWrite = z.getName() + "\t" + z.getSurname() + "\t" + z.getID() + "\n";
 					writer.write(toWrite);
 				}
-			//} catch (IOException e) {
-			//	e.printStackTrace();
-				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				//writer.close();
 			}
 		}
+		System.exit(0);
+	}
 	
 }

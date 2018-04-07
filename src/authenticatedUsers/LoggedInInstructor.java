@@ -72,6 +72,10 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
 		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
+		
+		if (course.getStudentsEnrolled().isEmpty())//no students
+			return;
+		
 		System.out.println("Please select an enrolled student: ");
 		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
@@ -160,6 +164,9 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		String line = reader.next().toUpperCase();
 		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
 		
+		if (course.getStudentsEnrolled().isEmpty())//no students
+			return;
+		
 		//select a student
 		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
@@ -198,7 +205,10 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
 		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
-				
+		
+		if (course.getStudentsEnrolled().isEmpty())//no students
+			return;
+		
 		//select a student
 		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
@@ -208,11 +218,12 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		try {
 			course.calculateFinalGrade(student.getID());
 		} catch (NullPointerException e) {
-			System.out.println("Not all marks are present" + e.getMessage());
+			System.out.println("Not all marks are present");
 			return;
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public void printRecord() {
 		InstructorModel teacher = verifyInstructor(this.authenticationToken);
 		Scanner reader = new Scanner(System.in);
@@ -222,6 +233,11 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		System.out.println("Enter class ID: ");
 		String line = reader.next().toUpperCase();
 		CourseOffering course = ModelRegister.getInstance().getRegisteredCourse(line);
+		
+		if (course.getStudentsEnrolled().isEmpty()) {//no students
+			System.out.println("No students in the course");
+			return;
+		}
 //		for (StudentModel student : course.getStudentsEnrolled()) 
 //			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		System.out.println("Would you like to print the record for a specific student(0) or the whole class(1)?: ");
@@ -232,6 +248,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 			case 1: printAll(course);
 					break;
 			default:System.out.println("Single");
+					printSingle(course, reader);
 					break;
 		}
 //		System.out.println("Enter Student ID: ");

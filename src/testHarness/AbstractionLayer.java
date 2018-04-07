@@ -37,22 +37,12 @@ public class AbstractionLayer {
 			student.enroll();
 	}
 	
-	private void enroll(LoggedInStudent student) {
-		student.enroll();
-	}
 	
 	public void addNotification(NotificationTypes type) {
 		for (LoggedInStudent student : LogInServer.getServer().getLoggedInStudents())
 			student.addNotification(type);
 	}
 	
-	private void addNotification(LoggedInStudent student, NotificationTypes type) {
-		student.addNotification(type);
-	}
-	
-	private void selectNotification(LoggedInStudent student) {
-		student.selectNotification();
-	}
 	public void selectNotification() {
 		for (LoggedInStudent student : LogInServer.getServer().getLoggedInStudents())
 			student.selectNotification();
@@ -63,9 +53,6 @@ public class AbstractionLayer {
 			student.printRecord();
 	}
 	
-	private void printRecord(LoggedInStudent student) {
-		student.printRecord();
-	}
 	
 	public void start(LoggedInAdmin admin) {
 		try {
@@ -109,31 +96,19 @@ public class AbstractionLayer {
 			instructor.printRecord();
 	}
 	
-	private void addMark(LoggedInInstructor instructor) {
-		instructor.addMark();
-	}
-	private void modifyMark(LoggedInInstructor instructor) {
-		instructor.modifyMark();
-	}
-	private void calcGrade(LoggedInInstructor instructor) {
-		instructor.calcGrade();
-	}
-	private void printClass(LoggedInInstructor instructor) {
-		instructor.printRecord();
-	}
 	
 	private void instructor(LoggedInInstructor instructor) {
 		Scanner reader = new Scanner(System.in);
 		System.out.println("1) add Mark \n2) modifyMark \n3) calculate Grade \n4) print Record\n");
 		int choice = reader.nextInt();
 		switch (choice) {
-		case 1: addMark(instructor);
+		case 1: instructor.addMark();
 				break;
-		case 2: modifyMark(instructor);
+		case 2: instructor.modifyMark();
 				break;
-		case 3: calcGrade(instructor);
+		case 3: instructor.calcGrade();
 				break;
-		case 4: printClass(instructor);
+		case 4: instructor.printRecord();
 				break;
 		default: System.out.println("Try again");
 				instructor(instructor);
@@ -145,9 +120,9 @@ public class AbstractionLayer {
 		System.out.println("1) enroll \n2) select Notification \n3) add Notification \n4) print Record\n");
 		int choice = reader.nextInt();
 		switch (choice) {
-		case 1: enroll(student);
+		case 1: student.enroll();
 				break;
-		case 2: selectNotification(student);
+		case 2: student.selectNotification();
 				break;
 		case 3: System.out.println("Enter notification type");
 				String one = reader.next().toLowerCase();
@@ -161,8 +136,9 @@ public class AbstractionLayer {
 							break;
 				default: type = NotificationTypes.EMAIL;
 				}
-				addNotification(student, type);
-		case 4: printRecord(student);
+				student.addNotification(type);
+				break;
+		case 4: student.printRecord();
 				break;
 		default: System.out.println("Try again");
 				student(student);
