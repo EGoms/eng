@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import authenticationServer.LogInServer;
 import customDatatypes.EvaluationTypes;
 import offerings.ICourseOffering;
 import registrar.ModelRegister;
@@ -16,7 +17,7 @@ import systemUsers.SystemUserModel;
 public class StudentModelFactory implements SystemUserModelFactory {
 
 	public StudentModel createSystemUserModel(BufferedReader br, ICourseOffering course) {
-		// TODO Auto-generated method stub
+		Map<String, String> logInInfo = LogInServer.getServer().info();
 		StudentModel newStudent;
 		try{
 		String line = br.readLine();
@@ -39,7 +40,7 @@ public class StudentModelFactory implements SystemUserModelFactory {
 //			for debugging purposes
 //			System.out.println("Name : " + newStudent.getName() + "\nSurname : " + newStudent.getSurname() + "\nID : " + 
 //			newStudent.getID() + "\n");
-			
+			logInInfo.put(newStudent.getID(), "pass");
 			return newStudent;
 		}catch(IOException ioe){
 			System.out.println(ioe.getMessage() + "exception thrown at StudentModelCreation"); 

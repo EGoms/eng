@@ -160,11 +160,15 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 				System.out.println("No marks for the student");
 			} else {
 				System.out.println("Grades for " + target.getName()+ " "+target.getSurname() + " in " + course.getCourseName());
-				Marks marks = target.getPerCourseMarks().get(course);
-				marks.initializeIterator();
-				while (marks.hasNext()) {
-					Entry<String, Double> current = marks.getNextEntry();
-					System.out.println(current.getKey() + " " + current.getValue());
+				try {
+					Marks marks = target.getPerCourseMarks().get(course);
+					marks.initializeIterator();
+					while (marks.hasNext()) {
+						Entry<String, Double> current = marks.getNextEntry();
+						System.out.println(current.getKey() + " " + current.getValue());
+					}
+				} catch (NullPointerException e) {
+					System.out.println("No grades yet");
 				}
 			}
 		}

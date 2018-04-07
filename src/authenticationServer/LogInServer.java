@@ -43,17 +43,17 @@ public class LogInServer {
 		register = new HashMap<String, LoggedInAuthenticatedUser>();
 		BufferedReader in;
 		String line;
-		try {
-			in = new BufferedReader(new FileReader(new File("file.txt")));
-			while ((line = in.readLine()) != null) {
-				String id = line.split("\t")[0];
-				String pw = line.split("\t")[1];
-				logInInfo.put(id, pw);
-			}
-		} catch (IOException e) {
-			System.out.println(e.getMessage() + " exception thrown at LogInServer");
-			e.printStackTrace();
-		}
+//		try {
+//			in = new BufferedReader(new FileReader(new File("file.txt")));
+//			while ((line = in.readLine()) != null) {
+//				String id = line.split("\t")[0];
+//				String pw = line.split("\t")[1];
+//				logInInfo.put(id, pw);
+//			}
+//		} catch (IOException e) {
+//			System.out.println(e.getMessage() + " exception thrown at LogInServer");
+//			e.printStackTrace();
+//		}
 	}
 
 	/**
@@ -64,6 +64,10 @@ public class LogInServer {
 		if (server==null)
 			server = new LogInServer();
 		return server;
+	}
+	
+	public Map<String, String> info() {
+		return this.logInInfo;
 	}
 
 	/**
@@ -86,11 +90,11 @@ public class LogInServer {
 	 * @param id
 	 * @return authenticationToken set with the user id and type
 	 */
-	public AuthenticationToken login(String id, String pw) {
+	public LoggedInAuthenticatedUser login(String id, String pw) {
 		LoggedInUserFactory fact = new LoggedInUserFactory();
 		if (!verify(id, pw)) {
 			if (register.containsKey(id)) {
-				return register.get(id).getAuthenticationToken();
+				return register.get(id);
 			}
 			System.out.println("User not registered");
 			return null;
@@ -104,15 +108,15 @@ public class LogInServer {
 			LoggedInAdmin admin = fact.createLoggedInAdmin(token);
 			register.put(id, admin);
 			//register.put(id, token);
-			return token;
+			return admin;
 		}
 		if (onOff == 1) {
 			AuthenticationToken token = new AuthenticationToken();
 			token.setTokenID(id);
-			token.setUserType(logInInfo.get(id));
+			token.setUserType(ModelRegister.getInstance().getRegisteredUser(id).getType());
 			LoggedInAuthenticatedUser user = fact.createAuthenticatedUser(token);
 			register.put(id, user);
-			return token;
+			return user;
 		} else {
 			System.out.println("Admin must log in before users");
 			return null;

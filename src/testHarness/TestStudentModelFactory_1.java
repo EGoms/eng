@@ -24,7 +24,7 @@ import registrar.ModelRegister;
 import systemUsers.AdminModel;
 import systemUsers.StudentModel;
 import customDatatypes.NotificationTypes;
-//import systemUsers.InstructorModel;
+import systemUsers.InstructorModel;
 import operations.LoggedInStudentOperation;
 
 public class TestStudentModelFactory_1 {
@@ -82,6 +82,7 @@ public class TestStudentModelFactory_1 {
 		List<LoggedInAuthenticatedUser> loggedIn = server.getLoggedInUsers();
 		List<LoggedInStudent> students = server.getLoggedInStudents();
 		List<LoggedInInstructor> instructors = server.getLoggedInInstructors();
+		
 		System.out.println(loggedIn);
 		
 		for (LoggedInStudent stud : students) { //this one the method is called from the loggedInStudent class

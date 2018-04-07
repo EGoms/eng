@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import authenticationServer.LogInServer;
 import offerings.ICourseOffering;
 import registrar.ModelRegister;
 import systemUsers.InstructorModel;
@@ -13,6 +15,7 @@ public class InstructorModelFactory implements SystemUserModelFactory {
 
 	public InstructorModel createSystemUserModel(BufferedReader br, ICourseOffering course) {
 		// TODO Auto-generated method stub
+		Map<String, String> logInInfo = LogInServer.getServer().info();
 		InstructorModel newInstructorModel;
 		try{
 		String line = br.readLine();
@@ -29,6 +32,7 @@ public class InstructorModelFactory implements SystemUserModelFactory {
 		} 
 		newInstructorModel = (InstructorModel) ModelRegister.getInstance().getRegisteredUser(line.split("\t")[2]);
 		(newInstructorModel.getIsTutorOf()).add(course);
+		logInInfo.put(newInstructorModel.getID(), "pass");
 		return newInstructorModel;
 		}catch(IOException ioe){
 			System.out.println(ioe.getMessage());
