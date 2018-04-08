@@ -164,7 +164,7 @@ public class AbstractionLayer {
 		default: 	System.out.println("Def");
 					break;
 		}
-		System.out.println("would you like to perform another operation? (y/n) ");
+		System.out.println("would you like to perform another " + user.getType() + " operation? (y/n) ");
 		String line = reader.next().toUpperCase();
 		if (line.equalsIgnoreCase("Y"))
 			select(user);
