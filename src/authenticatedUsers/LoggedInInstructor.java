@@ -89,7 +89,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 		
 
 		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
-		System.out.println("You have 1 new " + student.getNotificationType() + " notification");
+		System.out.println(student.getName() + " " + student.getSurname() +" has 1 new " + student.getNotificationType() + " notification");
 		System.out.println();
 		line = reader.next().toUpperCase();
 		if (line.equalsIgnoreCase("Y"))
@@ -145,7 +145,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 
 		}
 		
-		System.out.println("Would you like to enter another grade? (y/n)");
+		System.out.println("Would you like to enter another grade for the same student? (y/n)");
 		String line = reader.next().toUpperCase();
 		if (line.equalsIgnoreCase("Y"))
 			getMark(student, course, reader);

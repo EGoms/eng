@@ -20,6 +20,12 @@ import systemUsers.StudentModel;
 
 public class LoggedInInstructorOperation implements ILoggedInInstructorOperation {
 
+	/**
+	 * present courses teacher is a tutor of then select one
+	 * present students in that course and select one
+	 * call helper method to get the mark
+	 * prompt for adding another mark
+	 */
 	public void addMark(LoggedInAuthenticatedUser user) {
 		InstructorModel teacher = verifyInstructor(user);
 		Scanner reader = new Scanner(System.in);
@@ -47,18 +53,20 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 		
 
 		System.out.println("Would you like to enter grades for another class/student? (y/n): ");
-		System.out.println("You have 1 new " + student.getNotificationType() + " notification");
+		System.out.println(student.getName() + " " + student.getSurname() + " has 1 new " + student.getNotificationType() + " notification");
 		System.out.println();
 		line = reader.next().toUpperCase();
 		if (line.equalsIgnoreCase("Y"))
 			addMark(user);
 			
 	}
+	
 	private void getMark(StudentModel student, CourseOffering course, Scanner reader) {
 		Map<ICourseOffering, Marks> grades;
 		Marks mark = new Marks();
-		if (student.getPerCourseMarks() == null) {
-
+		if (student.getPerCourseMarks() == null) { //case no marks/courses
+			
+			//get the possible evaluation entities and present them
 			List<String> possibilities = new ArrayList<String>();
 			Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
 			stuff.initializeIterator();
@@ -67,6 +75,7 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 				possibilities.add(current.getKey());
 				System.out.println(current.getKey());
 			}
+			//get user input and if it matches one of the possibilities then we add the mark and course
 			System.out.println("Pick one of the above");
 			String line = reader.next().toUpperCase();
 			System.out.println("Enter grade: ");
@@ -79,7 +88,7 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 					student.setPerCourseMarks(grades);
 				}
 			}
-		} else if (!student.getPerCourseMarks().containsKey(course)) {
+		} else if (!student.getPerCourseMarks().containsKey(course)) { //we have per course marks but doesn't have the course
 			List<String> possibilities = new ArrayList<String>();
 			Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
 			stuff.initializeIterator();
@@ -98,12 +107,12 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 					student.getPerCourseMarks().put(course, mark);
 				}
 			}
-		} else {
+		} else { //otherwise call the other helper
 			helper(course, student, reader);
 
 		}
 		
-		System.out.println("Would you like to enter another grade? (y/n)");
+		System.out.println("Would you like to enter another grade for the same student? (y/n)");
 		String line = reader.next().toUpperCase();
 		if (line.equalsIgnoreCase("Y"))
 			getMark(student, course, reader);
@@ -176,8 +185,6 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 			System.out.println("No students enrolled in this course");
 			return;
 		}
-//		for (StudentModel student : course.getStudentsEnrolled()) 
-//			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
 		System.out.println("Would you like to print the record for a specific student(0) or the whole class(1)?: ");
 		int choice = reader.nextInt();
 		switch (choice) {
@@ -189,10 +196,6 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 					printSingle(course, reader);
 					break;
 		}
-//		System.out.println("Enter Student ID: ");
-//		line = reader.next();
-//		StudentModel student = (StudentModel) ModelRegister.getInstance().getRegisteredUser(line);
-		
 		
 	}
 	
@@ -212,6 +215,12 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 		return student;
 	}
 	
+	/**
+	 * pretty much the same as getMark helper method but assumes percourse marks exists and has the course in it
+	 * @param course
+	 * @param student
+	 * @param reader
+	 */
 	private void helper(CourseOffering course, StudentModel student, Scanner reader) {
 		List<String> possibilities = new ArrayList<String>();
 		Weights stuff = course.getEvaluationStrategies().get(student.getEvaluationEntities().get(course));
@@ -231,6 +240,7 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 				student.getPerCourseMarks().get(course).addToEvalStrategy(line, grade);
 		}
 	}
+	
 	private void printSingle(CourseOffering course, Scanner reader) {
 		for (StudentModel student : course.getStudentsEnrolled()) 
 			System.out.println(student.getName() +" "+student.getSurname() + "\t" + student.getID());
