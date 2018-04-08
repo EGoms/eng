@@ -6,7 +6,14 @@ import authenticatedUsers.LoggedInStudent;
 import authenticationServer.LogInServer;
 import operations.AbstractionLayer;
 
-//uses LoggedIn__ class methods
+/**
+ * Single log in
+ * Uses the class methods of logged in user objects to carry out functionality.
+ * AbstractionLayer has methods to select an operation based on input parameter of a logged in user
+ * AbstractionLayer also has mthods that perform a specific operation on all users of a valid type
+ * @author evangomolin
+ *
+ */
 public class operationClasses {
 
 	public static void main(String[] args) {
@@ -22,8 +29,12 @@ public class operationClasses {
 
 		methods.select(student);
 		methods.select(instructor);
+		methods.select(student);
 
 		LoggedInStudent student2 = (LoggedInStudent) server.login();
+		methods.select(student2);
+		methods.select(instructor);
+		methods.select(student2);
 
 		methods.select(admin);
 	}

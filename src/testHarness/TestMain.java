@@ -10,7 +10,12 @@ import operations.LoggedInAdminOperation;
 import operations.LoggedInInstructorOperation;
 import operations.LoggedInStudentOperation;
 
-//uses LoggedIn__Operation classes
+/**
+ * This version uses the operations package which has the functionality of the system split by the distinct (logged in) user types
+ * The classes which implement the functionality require a logged in user as parameter to call the methods.
+ * @author evangomolin
+ *
+ */
 public class TestMain {
 
 	public static void main(String[] args) throws IOException {

@@ -293,7 +293,7 @@ public class LoggedInInstructor implements LoggedInAuthenticatedUser {
 				}
 				course.calculateFinalGrades();
 			} catch (NullPointerException e) {
-				System.out.println("Missing mark");
+				continue;
 			}
 		}
 	}

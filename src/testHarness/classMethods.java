@@ -5,6 +5,12 @@ import authenticatedUsers.LoggedInStudent;
 import authenticationServer.LogInServer;
 import operations.AbstractionLayer;
 
+/**
+ * multiple log in.
+ * Don't perform operations on individual users
+ * @author evangomolin
+ *
+ */
 public class classMethods {
 
 	public static void main(String[] args) {
