@@ -266,7 +266,7 @@ public class LoggedInInstructorOperation implements ILoggedInInstructorOperation
 				}
 				course.calculateFinalGrades();
 			} catch (NullPointerException e) {
-				System.out.println("No marks for this student");
+				continue;
 			}
 		}
 	}
