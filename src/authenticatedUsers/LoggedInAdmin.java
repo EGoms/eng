@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -88,10 +89,16 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 		AdminModelFactory adminFactory = new AdminModelFactory();
 		AdminModel admin = adminFactory.createAdmin();
 		OfferingFactory factory = new OfferingFactory();
-		BufferedReader reader = new BufferedReader(new FileReader(new File("note_1.txt")));
+		
+		//this one works with text file in /src/
+		//BufferedReader reader = new BufferedReader(new FileReader(new File("./src/note_1.txt")));
+		
+		//this one works for jar
+		BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("note_1.txt")));
 		CourseOffering course =  factory.createCourseOffering(reader);
 		reader.close();
-		reader = new BufferedReader(new FileReader(new File("note_2.txt")));
+		//reader = new BufferedReader(new FileReader(new File("note_2.txt")));
+		reader = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("note_2.txt")));
 		course = factory.createCourseOffering(reader);
 		reader.close();
 		
@@ -126,7 +133,7 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 		AdminModelFactory adminF = new AdminModelFactory();
 		AdminModel admin = adminF.createAdmin();
 		OfferingFactory fact = new OfferingFactory();
-		File dir = new File("./");
+		File dir = new File("./src/");
 		for (File file : dir.listFiles()) {
 			if (file.isFile() && (file.getName().contains("note_"))) {
 				BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -154,7 +161,7 @@ public class LoggedInAdmin implements LoggedInAuthenticatedUser {
 	public void stop() {
 		int i = 1;
 		for (CourseOffering course : ModelRegister.getInstance().getAllCourses()) {
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter("class_"+i+".txt"))) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter("./src/class_"+i+".txt"))) {
 				i++;
 				String toWrite = course.getCourseName() + "\t" + course.getCourseID() + "\n";
 				writer.write(toWrite);
