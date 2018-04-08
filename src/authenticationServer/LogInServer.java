@@ -102,7 +102,7 @@ public class LogInServer {
 				return register.get(line);
 			}
 			System.out.println("User not registered");
-			return null;
+			return login();
 		}
 		
 		if (line.equals("0000")) {

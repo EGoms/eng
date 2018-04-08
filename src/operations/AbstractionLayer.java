@@ -1,4 +1,4 @@
-package testHarness;
+package operations;
 /**
  * This file contains methods that call the methods implemented in both the AuthenticatedUser classes and the classes in the 
  * Operations package. Either can be used, they both accomplish the same functionality. Function calls are easier with the class methods
@@ -21,15 +21,11 @@ import loggedInUserFactory.LoggedInUserFactory;
 import offerings.CourseOffering;
 import offerings.ICourseOffering;
 import offerings.OfferingFactory;
-import operations.LoggedInAdminOperation;
-import operations.LoggedInInstructorOperation;
-import operations.LoggedInStudentOperation;
 import registrar.ModelRegister;
 import systemUsers.AdminModel;
 import systemUsers.StudentModel;
 import customDatatypes.NotificationTypes;
 import systemUsers.InstructorModel;
-import operations.LoggedInStudentOperation;
 
 public class AbstractionLayer {
 	public void enroll() {
