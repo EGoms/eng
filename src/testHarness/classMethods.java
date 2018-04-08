@@ -11,18 +11,19 @@ public class classMethods {
 		LogInServer server = LogInServer.getServer();
 		LoggedInAdmin admin = server.adminLogin();
 		
+		
+		//this one logs in many users and then performs the specified operation on each of the matching user types
+		
 		AbstractionLayer methods = new AbstractionLayer();
 		methods.start(admin);
 		server.loginMany();
-		methods.enroll();
+		methods.enroll(); //calls enroll on all logged in students
 		methods.addMark();
-		methods.printRecord();
-		methods.printClass();
+		methods.printRecord(); //student print record
+		methods.printClass(); //instructor method
 		methods.enroll();
-		methods.addMark();
+		methods.addMark(); //instructor
 		methods.printRecord();
-		//LoggedInStudent student = (LoggedInStudent) server.login("3456", "pass");
-		//methods.enroll(student);
 		methods.stop(admin);
 
 	}

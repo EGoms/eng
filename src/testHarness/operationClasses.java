@@ -13,25 +13,18 @@ public class operationClasses {
 		LogInServer server = LogInServer.getServer();
 		LoggedInAdmin admin = server.adminLogin();
 		
+		
+		//methods.select gets a type of user and return the possible operations it can do then user chooses which to do
 		AbstractionLayer methods = new AbstractionLayer();
-		//methods.start(admin);
 		methods.select(admin);
 		LoggedInInstructor instructor = (LoggedInInstructor) server.login();
 		LoggedInStudent student = (LoggedInStudent) server.login();
-		//methods.enroll(student);
-		//methods.addMark(instructor);
+
 		methods.select(student);
 		methods.select(instructor);
-//		methods.printRecord(student);
-//		methods.printClass(instructor);
-//		
+
 		LoggedInStudent student2 = (LoggedInStudent) server.login();
-//		methods.enroll(student2);
-//		methods.addMark(instructor);
-//		methods.printRecord(student2);
-//		methods.printClass(instructor);
-//		
-//		methods.stop(admin);
+
 		methods.select(admin);
 	}
 
