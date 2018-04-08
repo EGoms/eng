@@ -6,6 +6,7 @@ import authenticatedUsers.LoggedInStudent;
 import authenticationServer.LogInServer;
 import operations.AbstractionLayer;
 
+//uses LoggedIn__ class methods
 public class operationClasses {
 
 	public static void main(String[] args) {

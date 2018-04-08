@@ -142,7 +142,7 @@ public class LogInServer {
 				return (LoggedInAdmin) register.get(id);
 			else {
 				System.out.println("Admin not registered");
-				return null;
+				return adminLogin();
 			}
 		}
 		
@@ -170,10 +170,10 @@ public class LogInServer {
 		if (!verify(id, pw)) {
 			if (register.containsKey(id)) {
 				System.out.println("User already logged in");
-				return;
+				loginMany();
 			} else {
 				System.out.println("User not registered");
-				return;
+				loginMany();
 			}
 		}
 		if (onOff == 1) { //other people are allowed to log in (admin is logged in)

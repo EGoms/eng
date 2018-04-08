@@ -10,6 +10,7 @@ import operations.LoggedInAdminOperation;
 import operations.LoggedInInstructorOperation;
 import operations.LoggedInStudentOperation;
 
+//uses LoggedIn__Operation classes
 public class TestMain {
 
 	public static void main(String[] args) throws IOException {
