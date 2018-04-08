@@ -158,7 +158,10 @@ public class LoggedInStudent implements LoggedInAuthenticatedUser {
 	 */
 	public void printRecord() {
 		StudentModel target = verifyStudent(this.authenticationToken);
-		
+		if (target.getCoursesEnrolled() == null) {
+			System.out.println("Student not enrolled in any courses");
+			return;
+		}
 		for (ICourseOffering course : target.getCoursesEnrolled()) {
 			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(course)) {
 				System.out.println("No marks for " + target.getName()+ " in "+course.getCourseName());

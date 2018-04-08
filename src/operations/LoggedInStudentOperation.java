@@ -109,6 +109,10 @@ public class LoggedInStudentOperation implements ILoggedInStudentOperation{
 	@Override
 	public void printRecord(LoggedInAuthenticatedUser user) {
 		StudentModel target = verifyStudent(user);
+		if (target.getCoursesEnrolled() == null) {
+			System.out.println("Student not enrolled in any courses");
+			return;
+		}
 		
 		for (ICourseOffering course : target.getCoursesEnrolled()) {
 			if (target.getPerCourseMarks() == null || !target.getPerCourseMarks().containsKey(course)) {
