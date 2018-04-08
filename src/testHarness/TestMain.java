@@ -26,6 +26,16 @@ public class TestMain {
 		LoggedInStudent s1 = (LoggedInStudent) server.login();
 		
 		studentOp.enroll(s1);
+		instructorOp.addMark(instructor);
+		studentOp.printRecord(s1);
+		instructorOp.printRecord(instructor);
+		
+		
+		LoggedInStudent s2 = (LoggedInStudent) server.login();
+		studentOp.enroll(s2);
+		instructorOp.addMark(instructor);
+		studentOp.printRecord(s2);
+		instructorOp.printRecord(instructor);
 		adminOp.stop(admin);
 	}
 
