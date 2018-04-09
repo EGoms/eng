@@ -171,9 +171,11 @@ public class LogInServer {
 			if (register.containsKey(id)) {
 				System.out.println("User already logged in");
 				loginMany();
+				return;
 			} else {
 				System.out.println("User not registered");
 				loginMany();
+				return;
 			}
 		}
 		if (onOff == 1) { //other people are allowed to log in (admin is logged in)
@@ -186,6 +188,8 @@ public class LogInServer {
 			String choice = reader.next().toUpperCase();
 			if (choice.equals("Y")) //call again if we want to. all users get added to register
 				loginMany();
+			else
+				return;
 		} else {
 			System.out.println("Admin must log in first");
 			return;
